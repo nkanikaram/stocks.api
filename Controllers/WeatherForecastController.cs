@@ -23,6 +23,7 @@ namespace stocks.api.Controllers
         [Authorize]
         public IEnumerable<WeatherForecast> Get()
         {
+            //Adding comment
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
