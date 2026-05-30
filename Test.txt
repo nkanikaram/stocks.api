@@ -2,26 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CustomerCorrespondence.Domain.Entities
 {
-    public class CorrespondenceStatusCode
+    public class DataRecords
     {
-        public Guid StatusId { get; set; }
-        public required string StatusCode { get; set; }
-        public required string StatusDescription { get; set; }
-        public void Validate()
+        public class DataRecord
         {
-            if (string.IsNullOrWhiteSpace(StatusCode))
-            {
-                throw new InvalidOperationException("StatusCode is required and cannot be null or empty.");
-            }
+            public string? orderId { get; set; }
+            public int usageId { get; set; }
+            public string? solutionsId { get; set; }
+            public string? subjectHandle { get; set; }
+            public int numberOfRecords { get; set; }
+            public Record[]? records { get; set; }
+        }
 
-            if (string.IsNullOrWhiteSpace(StatusDescription))
-            {
-                throw new InvalidOperationException("StatusDescription is required and cannot be null or empty.");
-            }
+        public class Record
+        {
+            public string? recordHandle { get; set; }
+            // Changed to Dictionary to support dynamic properties
+            public Dictionary<string, object>? additionalData { get; set; }
+            public string? additionalDataSchemaId { get; set; }
         }
     }
 }
