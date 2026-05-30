@@ -1,21 +1,39 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CustomerCorrespondence.Domain.Entities
 {
-    public class JourneyDeliveryInfo
+    public class MailDeliveryInfo
     {
-        [Required]
-        public int AccountId { get; set; }
+        [StringLength(60)]
+        public string? RecipientFullName { get; set; }
+
+        [StringLength(30)]
+        public string? RecipientFirstName { get; set; }
+
+        [StringLength(30)]
+        public string? RecipientLastName { get; set; }
 
         [Required]
-        public required MessageBody MessageBody { get; set; }
+        public RecipientAddress? RecipientAddress { get; set; }
+
+        public bool? NonUSAddressFlag { get; set; }
+        public bool? BadAddressFlag { get; set; }
 
         /// <summary>
-        /// Validates that no forbidden special characters exist in string fields.
+        /// Validates that no forbidden special characters exist in name and address fields.
         /// </summary>
         public void ValidateNoSpecialCharacters()
         {
-            MessageBody?.ValidateNoSpecialCharacters();
+            ProcessRequestHelper.CheckField(RecipientFullName, nameof(RecipientFullName));
+            ProcessRequestHelper.CheckField(RecipientFirstName, nameof(RecipientFirstName));
+            ProcessRequestHelper.CheckField(RecipientLastName, nameof(RecipientLastName));
+            RecipientAddress?.ValidateNoSpecialCharacters();
         }
 
         /// <summary>
@@ -23,65 +41,10 @@ namespace CustomerCorrespondence.Domain.Entities
         /// </summary>
         public void TrimAllStringFields()
         {
-            MessageBody?.TrimAllStringFields();
-        }
-    }
-
-    public class MessageBody
-    {
-        [Required]
-        public required string ContactKey { get; set; }
-
-        [Required]
-        public required string EventDefinitionKey { get; set; }
-
-        [Required]
-        public required MessageData Data { get; set; }
-
-        public void ValidateNoSpecialCharacters()
-        {
-            ProcessRequestHelper.CheckField(ContactKey, nameof(ContactKey));
-            ProcessRequestHelper.CheckField(EventDefinitionKey, nameof(EventDefinitionKey));
-            Data?.ValidateNoSpecialCharacters();
-        }
-
-        public void TrimAllStringFields()
-        {
-            ContactKey = ContactKey?.Trim() ?? string.Empty;
-            EventDefinitionKey = EventDefinitionKey?.Trim() ?? string.Empty;
-            Data?.TrimAllStringFields();
-        }
-    }
-
-    public class MessageData
-    {
-        [Required]
-        public required string SubscriberKey { get; set; }
-
-        [EmailAddress]
-        public string? EmailAddress { get; set; }
-
-        public string? SourceSystem { get; set; }
-
-        public string? FirstName { get; set; }
-
-        public string? AttachmentName { get; set; }
-
-        public void ValidateNoSpecialCharacters()
-        {
-            ProcessRequestHelper.CheckField(SubscriberKey, nameof(SubscriberKey));
-            ProcessRequestHelper.CheckField(EmailAddress, nameof(EmailAddress));
-            ProcessRequestHelper.CheckField(SourceSystem, nameof(SourceSystem));
-            ProcessRequestHelper.CheckField(FirstName, nameof(FirstName));
-            ProcessRequestHelper.CheckField(AttachmentName, nameof(AttachmentName));
-        }
-        public void TrimAllStringFields()
-        {
-            SubscriberKey = SubscriberKey?.Trim() ?? string.Empty;
-            EmailAddress = EmailAddress?.Trim();
-            SourceSystem = SourceSystem?.Trim();
-            FirstName = FirstName?.Trim();
-            AttachmentName = AttachmentName?.Trim();
+            RecipientFullName = RecipientFullName?.Trim();
+            RecipientFirstName = RecipientFirstName?.Trim();
+            RecipientLastName = RecipientLastName?.Trim();
+            RecipientAddress?.TrimAllStringFields();
         }
     }
 }
